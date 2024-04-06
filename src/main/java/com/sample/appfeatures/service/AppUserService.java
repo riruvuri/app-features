@@ -2,6 +2,7 @@ package com.sample.appfeatures.service;
 
 import com.sample.appfeatures.dto.UserGetDto;
 import com.sample.appfeatures.dto.UserPostDto;
+import com.sample.appfeatures.exception.ResourceNotFoundException;
 import com.sample.appfeatures.mapper.AppUserMapper;
 import com.sample.appfeatures.model.entity.AppUser;
 import com.sample.appfeatures.model.repository.AppUserRepository;
@@ -26,7 +27,9 @@ public class AppUserService {
     }
 
     public UserGetDto findUser(Long id) {
-        Optional<AppUser> appUserResponse = appUserRepository.findById(id);
+        Optional<AppUser> appUserResponse = appUserRepository.findById(id)
+                .map(Optional::of)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id:"+id));
 
         return appUserMapper.appUserToUser(appUserResponse.get());
     }
